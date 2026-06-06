@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P104 遊客端｜即時字幕實驗版</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero card">
+      <div>
+        <p class="eyebrow">P104 WhisperTour</p>
+        <h1>遊客端｜即時字幕</h1>
+        <p class="muted">輸入導遊提供的房間代碼，即可接收即時字幕。可自行顯示或隱藏字幕區。</p>
+      </div>
+      <div class="badge">Audience</div>
+    </section>
+
+    <section class="card controls">
+      <label>
+        房間代碼
+        <input id="roomCode" type="text" value="P104-DEMO" autocomplete="off" />
+      </label>
+
+      <div class="button-row">
+        <button id="connectBtn" class="primary">加入字幕房間</button>
+        <button id="toggleCaptionBtn" disabled>隱藏字幕</button>
+        <button id="clearBtn" disabled>清除本機畫面</button>
+      </div>
+
+      <p id="status" class="status">尚未加入</p>
+    </section>
+
+    <section id="subtitlePanel" class="card subtitle-card">
+      <div class="subtitle-header">
+        <h2>即時字幕</h2>
+        <span id="liveTag" class="live-tag off">WAITING</span>
+      </div>
+      <div id="subtitleBox" class="subtitle-box" aria-live="polite">
+        等待導遊端送出字幕……
+      </div>
+      <p class="hint">此版本只顯示即時字幕，不會儲存逐字稿。</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/p104_common.js"></script>
+  <script src="assets/js/p104_visitor.js"></script>
+</body>
+</html>

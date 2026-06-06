@@ -1,0 +1,14 @@
+-- P104 Subtitle Experiment v1
+-- This prototype uses Supabase Realtime Broadcast only.
+-- It does not create tables and does not store transcripts.
+-- Therefore, no table, RLS policy, or GRANT is required for the subtitle prototype itself.
+--
+-- Prerequisite:
+-- 1. Use your existing Supabase project URL and anon key.
+-- 2. Make sure Realtime is enabled in the Supabase project.
+-- 3. Copy config.sample.js to config.js and fill in the values.
+--
+-- Security note:
+-- Broadcast channels are suitable for temporary experiment rooms.
+-- For a production museum deployment, add room access control, expiring tokens,
+-- and move sensitive logic to a P104-prefixed Edge Function or LiveKit Agent service.

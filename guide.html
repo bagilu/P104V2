@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P104 導遊端｜即時字幕實驗版</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero card">
+      <div>
+        <p class="eyebrow">P104 WhisperTour</p>
+        <h1>導遊端｜即時字幕實驗版</h1>
+        <p class="muted">導遊開啟語音辨識後，字幕會即時送到同一房間的遊客端。此版本不儲存逐字稿。</p>
+      </div>
+      <div class="badge">v1</div>
+    </section>
+
+    <section class="card controls">
+      <label>
+        房間代碼
+        <input id="roomCode" type="text" value="P104-DEMO" autocomplete="off" />
+      </label>
+
+      <label>
+        字幕語言
+        <select id="languageSelect">
+          <option value="zh-TW">中文 Mandarin（zh-TW）</option>
+          <option value="en-US">English（en-US）</option>
+        </select>
+      </label>
+
+      <div class="button-row">
+        <button id="connectBtn" class="primary">連線字幕房間</button>
+        <button id="startBtn" disabled>開啟即時字幕</button>
+        <button id="stopBtn" disabled>停止字幕</button>
+        <button id="clearBtn" disabled>清除字幕</button>
+      </div>
+
+      <p id="status" class="status">尚未連線</p>
+    </section>
+
+    <section class="card subtitle-card">
+      <div class="subtitle-header">
+        <h2>目前字幕</h2>
+        <span id="liveTag" class="live-tag off">OFF</span>
+      </div>
+      <div id="subtitleBox" class="subtitle-box" aria-live="polite">
+        請先連線字幕房間，然後開啟即時字幕。
+      </div>
+      <p class="hint">若瀏覽器要求麥克風權限，請允許。建議使用 Chrome 或 Edge 測試。</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/p104_common.js"></script>
+  <script src="assets/js/p104_guide.js"></script>
+</body>
+</html>
