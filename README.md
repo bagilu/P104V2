@@ -43,7 +43,7 @@
 ## 檔案說明
 
 ```text
-P104_Subtitle_Experiment_v1/
+P104_Subtitle_Experiment_v1_1/
 ├─ guide.html                         導遊端頁面
 ├─ visitor.html                       遊客端頁面
 ├─ config.sample.js                   Supabase 設定範例
@@ -146,3 +146,10 @@ http://localhost:8000/visitor.html
 - 可加入即時翻譯
 - 可加入導覽摘要
 
+
+
+## v1.1 修正
+
+- 修正 Chrome / Edge Web Speech API 在 interim 與 final 結果交替時，可能造成字幕片段重複顯示的問題。
+- 導遊端新增簡易去重：同一 final segment 不重複累加；若 interim 與上一段 final 相同，則不顯示也不廣播。
+- 若語音辨識直接回傳完全重複片段，例如「禮義廉恥禮義廉恥」，會先壓縮為「禮義廉恥」。

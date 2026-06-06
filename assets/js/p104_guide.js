@@ -15,14 +15,74 @@
   let isRecognizing = false;
   let finalText = "";
   let lastInterimText = "";
+  let lastFinalSegment = "";
+  let lastBroadcastText = "";
+  let lastBroadcastInterim = "";
 
   function getSpeechRecognitionConstructor() {
     return window.SpeechRecognition || window.webkitSpeechRecognition;
   }
 
+  function compactText(text) {
+    return String(text || "").replace(/\s+/g, "").trim();
+  }
+
+  function normalizeSegment(text) {
+    let value = String(text || "").replace(/\s+/g, " ").trim();
+    value = removeExactDouble(value);
+    return value;
+  }
+
+  // 修正瀏覽器語音辨識偶爾輸出「禮義廉恥禮義廉恥」這種完全重複片段。
+  function removeExactDouble(text) {
+    const raw = String(text || "").trim();
+    const compact = compactText(raw);
+    if (compact.length >= 4 && compact.length % 2 === 0) {
+      const half = compact.length / 2;
+      if (compact.slice(0, half) === compact.slice(half)) {
+        return compact.slice(0, half);
+      }
+    }
+    return raw;
+  }
+
+  function isSameText(a, b) {
+    return compactText(a) === compactText(b);
+  }
+
+  function isAlreadyAtEnd(fullText, segment) {
+    const full = compactText(fullText);
+    const seg = compactText(segment);
+    return Boolean(seg && full.endsWith(seg));
+  }
+
+  function appendFinalSegment(segment) {
+    const clean = normalizeSegment(segment);
+    if (!clean) return false;
+
+    // 避免同一個 final result 被 Chrome/Edge 重送。
+    if (isSameText(clean, lastFinalSegment)) return false;
+    if (isAlreadyAtEnd(finalText, clean)) return false;
+
+    finalText = `${finalText} ${clean}`.trim();
+    lastFinalSegment = clean;
+    return true;
+  }
+
+  function shouldShowInterim(interim) {
+    const clean = normalizeSegment(interim);
+    if (!clean) return "";
+
+    // 若 interim 只是剛剛 final 的重複，不顯示、不廣播。
+    if (isSameText(clean, lastFinalSegment)) return "";
+    if (isAlreadyAtEnd(finalText, clean)) return "";
+
+    return clean;
+  }
+
   function render(text, interim = "") {
-    const finalPart = text.trim();
-    const interimPart = interim.trim();
+    const finalPart = String(text || "").trim();
+    const interimPart = shouldShowInterim(interim);
     subtitleBox.innerHTML = "";
 
     const finalDiv = document.createElement("div");
@@ -39,14 +99,25 @@
 
   async function broadcastCaption(type, text, interimText = "") {
     if (!channel) return;
+
+    const cleanInterim = type === "interim" ? shouldShowInterim(interimText) : "";
+    const cleanText = String(text || "").trim();
+
+    // 避免同一畫面內容因 onresult 高頻觸發而重複廣播。
+    if (type !== "system" && type !== "clear") {
+      if (isSameText(cleanText, lastBroadcastText) && isSameText(cleanInterim, lastBroadcastInterim)) return;
+      lastBroadcastText = cleanText;
+      lastBroadcastInterim = cleanInterim;
+    }
+
     await channel.send({
       type: "broadcast",
       event: "caption",
       payload: {
         source: "guide",
         type,
-        text,
-        interimText,
+        text: cleanText,
+        interimText: cleanInterim,
         language: languageSelect.value,
         sentAt: new Date().toISOString(),
         displayTime: P104.nowString()
@@ -127,14 +198,14 @@
       }
 
       if (newlyFinal) {
-        finalText = `${finalText} ${newlyFinal}`.trim();
+        const appended = appendFinalSegment(newlyFinal);
         lastInterimText = "";
         render(finalText, "");
-        broadcastCaption("final", finalText, "");
+        if (appended) broadcastCaption("final", finalText, "");
       } else if (interim) {
-        lastInterimText = interim;
+        lastInterimText = shouldShowInterim(interim);
         render(finalText, lastInterimText);
-        broadcastCaption("interim", finalText, lastInterimText);
+        if (lastInterimText) broadcastCaption("interim", finalText, lastInterimText);
       }
     };
 
@@ -179,6 +250,9 @@
   function clearCaption() {
     finalText = "";
     lastInterimText = "";
+    lastFinalSegment = "";
+    lastBroadcastText = "";
+    lastBroadcastInterim = "";
     render("", "");
     broadcastCaption("clear", "", "");
   }

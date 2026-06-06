@@ -51,3 +51,10 @@ p104-subtitle-{ROOM_CODE}
 - P104_caption_access_logs
 
 但正式版應先討論隱私告知、保存期限、刪除規則與使用同意。
+
+
+## v1.1 修正
+
+- 修正 Chrome / Edge Web Speech API 在 interim 與 final 結果交替時，可能造成字幕片段重複顯示的問題。
+- 導遊端新增簡易去重：同一 final segment 不重複累加；若 interim 與上一段 final 相同，則不顯示也不廣播。
+- 若語音辨識直接回傳完全重複片段，例如「禮義廉恥禮義廉恥」，會先壓縮為「禮義廉恥」。
