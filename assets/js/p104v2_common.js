@@ -1,4 +1,4 @@
-export const P104_V2_BUILD = "2.2";
+export const P104_V2_BUILD = "2.3";
 
 export function getConfig() {
   const cfg = window.P104_V2_CONFIG || window.P104_CONFIG;
@@ -76,17 +76,13 @@ export function nowTime() {
   return new Date().toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
-export function appendCaption(feed, text, time = nowTime()) {
+export function appendCaption(feed, text) {
   const cfg = getConfig();
   const max = cfg.MAX_CAPTION_PARAGRAPHS || 30;
   const div = document.createElement("div");
   div.className = "caption-item";
-  const t = document.createElement("span");
-  t.className = "time";
-  t.textContent = time;
   const body = document.createElement("div");
   body.textContent = text;
-  div.appendChild(t);
   div.appendChild(body);
   feed.appendChild(div);
   while (feed.children.length > max) feed.removeChild(feed.firstElementChild);

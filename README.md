@@ -1,18 +1,18 @@
-# P104 V2 WhisperTour｜QR 房間 + 語音 + 即時字幕版
+# P104 V2 WhisperTour｜QR 群組 + 語音 + 即時字幕版
 
 本版本把 P104 V2 的核心語音功能放回系統中，並整合前一版成功的即時字幕功能。
 
 ## 主要功能
 
 1. `index.html` 作為導遊端首頁，適合 GitHub Pages 自動開啟。
-2. 導遊端自動產生隨機房間代碼，例如 `P104V2-7K3D`。
+2. 導遊端自動產生隨機導覽群組代碼，例如 `P104V2-7K3D`。
 3. 導遊端自動產生遊客 QR Code。
 4. 遊客掃描後進入 `visitor.html?room=P104V2-XXXX`。
 5. 遊客端也顯示同一個 QR Code，方便下一位遊客掃描加入。
 6. LiveKit 負責語音傳輸。
 7. Supabase Realtime Broadcast 負責字幕同步。
 8. 導遊端可控制：
-   - 開始說話
+   - 開始導覽
    - 暫停收音
    - 開啟即時字幕
    - 停止字幕
@@ -142,9 +142,9 @@ https://yourname.github.io/P104V2/visitor.html?room=P104V2-XXXX
 ### 導遊端
 
 1. 開啟 `index.html`。
-2. 系統自動產生房間代碼與 QR Code。
+2. 系統自動產生導覽群組代碼與 QR Code。
 3. 請遊客掃描 QR Code。
-4. 按「開始說話」開始傳送語音。
+4. 按「開始導覽」開始傳送語音。
 5. 按「開啟即時字幕」開始送出逐段字幕。
 6. 暫停時可按「暫停收音」。
 7. 不需要字幕時可按「停止字幕」。
@@ -153,7 +153,7 @@ https://yourname.github.io/P104V2/visitor.html?room=P104V2-XXXX
 ### 遊客端
 
 1. 掃描 QR Code。
-2. 進入遊客端頁面後，字幕會自動加入房間。
+2. 進入遊客端頁面後，字幕會自動加入導覽群組。
 3. 按「開始收聽語音」後即可收聽導遊聲音。
 4. 可按「隱藏字幕」或「顯示字幕」。
 5. 若需要外語，可使用 Google Chrome 內建翻譯功能。
@@ -199,8 +199,8 @@ Authorization: Bearer SUPABASE_ANON_KEY
 因此 Supabase Edge Function 即使維持 JWT Verification，也可以接受匿名使用者請求。若仍出現 401，請確認 `config.js` 的 `SUPABASE_ANON_KEY` 是否正確，且 `LIVEKIT_TOKEN_ENDPOINT` 是否指向 `P104_V2_livekit_token`。
 
 
-## v2.2 修正
+## v2.3 修正
 - 修正遊客端可能因瀏覽器快取而沿用舊 token request 程式，導致 `Token request failed: 401`。
-- index.html 與 visitor.html 的 module script 加入 `?v=2.2` cache busting。
-- guide / visitor 對 common module 的 import 也加入 `?v=2.2`。
+- index.html 與 visitor.html 的 module script 加入 `?v=2.3` cache busting。
+- guide / visitor 對 common module 的 import 也加入 `?v=2.3`。
 - token request 仍會帶 `apikey` 與 `Authorization: Bearer <anon key>`，可維持 Edge Function JWT Verification。

@@ -3,7 +3,7 @@ import {
   getConfig, getSupabase, normalizeRoomCode, getRoomFromURL,
   makeVisitorURL, makeChannelName, renderQR, setStatus, appendCaption,
   clearCaptions, requestLiveKitToken
-} from './p104v2_common.js?v=2.2';
+} from './p104v2_common.js?v=2.3';
 
 const cfg = getConfig();
 const supabase = getSupabase();
@@ -30,7 +30,7 @@ const seenCaptions = new Set();
 function initUI() {
   els.roomCode.textContent = roomCode;
   renderQR(els.qrCode, makeVisitorURL(roomCode), 200);
-  setStatus(els.overallDot, els.overallStatus, `字幕房間：${roomCode}`, 'warn');
+  setStatus(els.overallDot, els.overallStatus, `字幕群組：${roomCode}`, 'warn');
 }
 
 async function connectSubtitleChannel() {
@@ -100,7 +100,7 @@ async function connectVoice() {
     await lkRoom.connect(cfg.LIVEKIT_URL, token);
     els.listenBtn.textContent = '已連線語音';
     els.listenBtn.disabled = true;
-    els.voiceStatus.textContent = '語音狀態：已加入，等待導遊開始說話';
+    els.voiceStatus.textContent = '語音狀態：已加入，等待導遊開始導覽';
   } catch (err) {
     console.error(err);
     els.voiceStatus.textContent = `語音狀態：失敗：${err.message}`;

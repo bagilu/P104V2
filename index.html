@@ -25,24 +25,24 @@
 
     <section class="grid two">
       <article class="panel">
-        <h2>房間資訊</h2>
+        <h2>導覽群組資訊</h2>
         <div class="room-code" id="roomCode">--</div>
-        <p class="hint">遊客掃描 QR Code 後會直接進入同一個導覽房間。</p>
+        <p class="hint">遊客掃描 QR Code 後會直接進入同一個導覽群組。</p>
         <div class="qr-wrap">
           <div id="qrCode"></div>
         </div>
         <div class="link-box" id="visitorLink"></div>
         <div class="row gap">
           <button class="btn secondary" id="copyLinkBtn">複製遊客連結</button>
-          <button class="btn secondary" id="newRoomBtn">產生新房間</button>
+          <button class="btn secondary" id="newRoomBtn">產生新群組</button>
         </div>
       </article>
 
       <article class="panel">
         <h2>語音控制</h2>
-        <p class="hint">「開始說話」會連線 LiveKit 並傳送導遊端麥克風；「暫停收音」會暫停語音傳送。</p>
+        <p class="hint">「開始導覽」會連線 LiveKit 並傳送導遊端麥克風；「暫停收音」會暫停語音傳送。</p>
         <div class="row gap wrap">
-          <button class="btn primary" id="speakBtn">開始說話</button>
+          <button class="btn primary" id="speakBtn">開始導覽</button>
           <button class="btn danger" id="pauseBtn" disabled>暫停收音</button>
         </div>
         <div class="mini-status" id="voiceStatus">語音狀態：尚未連線</div>
@@ -73,6 +73,6 @@
     </section>
   </main>
 
-  <script type="module" src="assets/js/p104v2_guide.js?v=2.2"></script>
+  <script type="module" src="assets/js/p104v2_guide.js?v=2.3"></script>
 </body>
 </html>

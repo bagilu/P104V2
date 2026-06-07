@@ -3,7 +3,7 @@ import {
   getConfig, getSupabase, generateRoomCode, normalizeRoomCode, getRoomFromURL,
   makeVisitorURL, makeChannelName, renderQR, setStatus, appendCaption,
   clearCaptions, compressRepeatedText, requestLiveKitToken, nowTime
-} from './p104v2_common.js?v=2.2';
+} from './p104v2_common.js?v=2.3';
 
 const cfg = getConfig();
 const supabase = getSupabase();
@@ -60,10 +60,10 @@ async function connectSubtitleChannel() {
     })
     .subscribe((status, err) => {
       if (status === 'SUBSCRIBED') {
-        setStatus(els.overallDot, els.overallStatus, `房間已建立：${roomCode}`, 'ok');
-        els.captionStatus.textContent = `字幕房間已連線：${roomCode}`;
+        setStatus(els.overallDot, els.overallStatus, `導覽群組已建立：${roomCode}`, 'ok');
+        els.captionStatus.textContent = `字幕群組已連線：${roomCode}`;
       } else if (status === 'CHANNEL_ERROR') {
-        setStatus(els.overallDot, els.overallStatus, '字幕房間連線失敗', 'bad');
+        setStatus(els.overallDot, els.overallStatus, '字幕群組連線失敗', 'bad');
         els.captionStatus.textContent = `字幕狀態：CHANNEL_ERROR ${err ? err.message || '' : ''}`;
       } else {
         els.captionStatus.textContent = `字幕連線狀態：${status}`;
@@ -97,9 +97,9 @@ async function startSpeaking() {
     }
     await localAudioTrack.unmute();
     els.voiceStatus.textContent = `語音狀態：正在傳送導遊麥克風（${roomCode}）`;
-    els.speakBtn.textContent = '繼續說話';
+    els.speakBtn.textContent = '開始導覽';
     els.pauseBtn.disabled = false;
-    setStatus(els.overallDot, els.overallStatus, `語音與字幕房間：${roomCode}`, 'ok');
+    setStatus(els.overallDot, els.overallStatus, `語音與字幕群組：${roomCode}`, 'ok');
   } catch (err) {
     console.error(err);
     els.voiceStatus.textContent = `語音狀態：失敗：${err.message}`;

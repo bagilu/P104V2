@@ -2,7 +2,7 @@
 
 ## 專案定位
 
-P104 V2 WhisperTour 是一套以「輕聲導覽」為核心的網頁式導覽系統。導遊可透過手機或筆電麥克風將語音傳送給遊客，遊客使用自己的手機與耳機收聽。此版本進一步加入即時字幕與 QR Code 房間加入機制。
+P104 V2 WhisperTour 是一套以「輕聲導覽」為核心的網頁式導覽系統。導遊可透過手機或筆電麥克風將語音傳送給遊客，遊客使用自己的手機與耳機收聽。此版本進一步加入即時字幕與 QR Code 群組加入機制。
 
 ## 系統架構
 
@@ -52,7 +52,7 @@ Supabase Realtime Broadcast
 
 ### QR Code
 
-用途：快速加入房間。
+用途：快速加入導覽群組。
 
 - 導遊端 QR Code 指向 `visitor.html?room=P104V2-XXXX`。
 - 遊客端也顯示同一 QR Code。
@@ -81,8 +81,8 @@ P104_V2_ALLOWED_ORIGINS=https://yourname.github.io
 1. 正式翻譯 API：新增 `P104_V2_translate` Edge Function。
 2. 地端 LLM 翻譯：新增 local translation server。
 3. 字幕逐字稿儲存：新增 `P104_V2_CaptionLogs` 資料表。
-4. 多導遊與多展區：新增房間管理與導覽場次設定。
-5. 管理後台：查看目前房間、連線人數與導覽狀態。
+4. 多導遊與多展區：新增群組管理與導覽場次設定。
+5. 管理後台：查看目前群組、連線人數與導覽狀態。
 
 ### 401 Token request failed 修正說明
 
@@ -96,8 +96,8 @@ Authorization: Bearer SUPABASE_ANON_KEY
 因此 Supabase Edge Function 即使維持 JWT Verification，也可以接受匿名使用者請求。若仍出現 401，請確認 `config.js` 的 `SUPABASE_ANON_KEY` 是否正確，且 `LIVEKIT_TOKEN_ENDPOINT` 是否指向 `P104_V2_livekit_token`。
 
 
-## v2.2 修正
+## v2.3 修正
 - 修正遊客端可能因瀏覽器快取而沿用舊 token request 程式，導致 `Token request failed: 401`。
-- index.html 與 visitor.html 的 module script 加入 `?v=2.2` cache busting。
-- guide / visitor 對 common module 的 import 也加入 `?v=2.2`。
+- index.html 與 visitor.html 的 module script 加入 `?v=2.3` cache busting。
+- guide / visitor 對 common module 的 import 也加入 `?v=2.3`。
 - token request 仍會帶 `apikey` 與 `Authorization: Bearer <anon key>`，可維持 Edge Function JWT Verification。
