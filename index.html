@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P104 V2 WhisperTour｜導遊端</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">P104 V2 WhisperTour</p>
+        <h1>輕聲導覽｜導遊端</h1>
+        <p class="subtitle">語音透過 LiveKit 傳送；字幕透過 Supabase Realtime 同步。遊客掃描 QR Code 即可加入。</p>
+      </div>
+      <div class="status-card">
+        <span class="status-dot" id="overallDot"></span>
+        <span id="overallStatus">準備中</span>
+      </div>
+    </header>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>房間資訊</h2>
+        <div class="room-code" id="roomCode">--</div>
+        <p class="hint">遊客掃描 QR Code 後會直接進入同一個導覽房間。</p>
+        <div class="qr-wrap">
+          <div id="qrCode"></div>
+        </div>
+        <div class="link-box" id="visitorLink"></div>
+        <div class="row gap">
+          <button class="btn secondary" id="copyLinkBtn">複製遊客連結</button>
+          <button class="btn secondary" id="newRoomBtn">產生新房間</button>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>語音控制</h2>
+        <p class="hint">「開始說話」會連線 LiveKit 並傳送導遊端麥克風；「暫停收音」會暫停語音傳送。</p>
+        <div class="row gap wrap">
+          <button class="btn primary" id="speakBtn">開始說話</button>
+          <button class="btn danger" id="pauseBtn" disabled>暫停收音</button>
+        </div>
+        <div class="mini-status" id="voiceStatus">語音狀態：尚未連線</div>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>即時字幕</h2>
+        <label class="label" for="captionLang">字幕辨識語言</label>
+        <select id="captionLang" class="select">
+          <option value="zh-TW">中文 Mandarin（zh-TW）</option>
+          <option value="en-US">English（en-US）</option>
+        </select>
+        <div class="row gap wrap controls">
+          <button class="btn primary" id="startCaptionBtn">開啟即時字幕</button>
+          <button class="btn danger" id="stopCaptionBtn" disabled>停止字幕</button>
+          <button class="btn secondary" id="clearCaptionBtn">清除字幕</button>
+        </div>
+        <div class="mini-status" id="captionStatus">字幕狀態：尚未開啟</div>
+        <div class="interim" id="interimText">等待語音辨識結果...</div>
+      </article>
+
+      <article class="panel">
+        <h2>導遊端字幕預覽</h2>
+        <div class="caption-feed" id="captionFeed"></div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="assets/js/p104v2_guide.js"></script>
+</body>
+</html>

@@ -1,60 +1,85 @@
-# README_SYSTEM｜P104 Subtitle Experiment v1
+# README_SYSTEM｜P104 V2 WhisperTour
 
 ## 專案定位
 
-本版本是 P104 WhisperTour 的「字幕實驗版」，只驗證即時字幕流程，不處理正式身分驗證、不儲存逐字稿、不串接付費 STT API。
+P104 V2 WhisperTour 是一套以「輕聲導覽」為核心的網頁式導覽系統。導遊可透過手機或筆電麥克風將語音傳送給遊客，遊客使用自己的手機與耳機收聽。此版本進一步加入即時字幕與 QR Code 房間加入機制。
 
-## 設計原則
-
-1. 不破壞既有 P104 輕聲導覽主系統
-2. 保持 GitHub Pages + Supabase 的輕量架構
-3. 先以最低成本驗證可行性
-4. 將正式 STT API、LiveKit Agent、翻譯、逐字稿儲存留到下一階段
-
-## 目前資料流
-
-Guide browser microphone  
-→ Web Speech API SpeechRecognition  
-→ Supabase Realtime Broadcast channel  
-→ Visitor browser subtitle panel
-
-## 房間規則
-
-房間代碼會轉成大寫，並移除非英數、連字號、底線字元。
-
-Realtime channel 名稱格式：
+## 系統架構
 
 ```text
-p104-subtitle-{ROOM_CODE}
+導遊端 index.html
+  ├─ 產生 room code
+  ├─ 產生 visitor QR Code
+  ├─ LiveKit 發送語音
+  └─ Web Speech API 產生字幕
+       ↓
+Supabase Realtime Broadcast
+       ↓
+遊客端 visitor.html
+  ├─ LiveKit 接收語音
+  ├─ Supabase Realtime 接收字幕
+  ├─ 顯示／隱藏字幕
+  └─ Chrome 翻譯提示
 ```
 
-## 安全性說明
+## 技術分工
 
-此版為實驗原型。Supabase anon key 可放在前端，但正式部署時應加入：
+### LiveKit
 
-- 房間建立與加入權限
-- 短期 token
-- P104 前綴 Edge Function
-- 導遊端與遊客端角色區分
-- Realtime channel access control
+用途：即時語音傳輸。
 
-## 不使用資料表的原因
+- 導遊端：canPublish = true
+- 遊客端：canPublish = false, canSubscribe = true
+- Token 由 `P104_V2_livekit_token` Edge Function 產生。
 
-本版本需求明確為「暫時不儲存逐字稿，或只做本機顯示」。因此不建立字幕資料表，避免資料保護、RLS、保存期限與刪除機制的額外問題。
+### Supabase Realtime Broadcast
 
-## 未來正式版可擴充資料表
+用途：即時字幕與清除字幕訊息。
 
-若未來要保存字幕，可新增：
+- 不建立資料表。
+- 不儲存逐字稿。
+- 使用 public broadcast channel。
+- Channel name: `p104v2-subtitle-${roomCode.toLowerCase()}`
 
-- P104_caption_sessions
-- P104_caption_segments
-- P104_caption_access_logs
+### Web Speech API
 
-但正式版應先討論隱私告知、保存期限、刪除規則與使用同意。
+用途：導遊端瀏覽器語音辨識。
 
+- 中文：zh-TW
+- 英文：en-US
+- 僅 final result 廣播給遊客。
+- interim result 只在導遊端作為暫時預覽。
 
-## v1.1 修正
+### QR Code
 
-- 修正 Chrome / Edge Web Speech API 在 interim 與 final 結果交替時，可能造成字幕片段重複顯示的問題。
-- 導遊端新增簡易去重：同一 final segment 不重複累加；若 interim 與上一段 final 相同，則不顯示也不廣播。
-- 若語音辨識直接回傳完全重複片段，例如「禮義廉恥禮義廉恥」，會先壓縮為「禮義廉恥」。
+用途：快速加入房間。
+
+- 導遊端 QR Code 指向 `visitor.html?room=P104V2-XXXX`。
+- 遊客端也顯示同一 QR Code。
+
+## 命名規則
+
+- 專案編號：P104 V2
+- Edge Function：`P104_V2_livekit_token`
+- SQL notes：`P104_V2_realtime_notes.sql`
+- 不使用資料表，因此沒有 table schema。
+
+## 安全設計
+
+LiveKit API secret 不可放在前端。因此使用 Supabase Edge Function 產生 token。
+
+建議正式展示時設定：
+
+```text
+P104_V2_ALLOWED_ORIGINS=https://yourname.github.io
+```
+
+測試階段可暫時不設定，Function 會允許所有 origin。
+
+## 後續擴充方向
+
+1. 正式翻譯 API：新增 `P104_V2_translate` Edge Function。
+2. 地端 LLM 翻譯：新增 local translation server。
+3. 字幕逐字稿儲存：新增 `P104_V2_CaptionLogs` 資料表。
+4. 多導遊與多展區：新增房間管理與導覽場次設定。
+5. 管理後台：查看目前房間、連線人數與導覽狀態。

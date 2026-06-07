@@ -1,155 +1,188 @@
-# P104 WhisperTour Subtitle Experiment v1
+# P104 V2 WhisperTour｜QR 房間 + 語音 + 即時字幕版
 
-本 ZIP 是 P104「輕聲導覽」的第一階段字幕實驗版。目的不是取代正式語音辨識服務，而是先驗證：
+本版本把 P104 V2 的核心語音功能放回系統中，並整合前一版成功的即時字幕功能。
 
-- 導遊端可以開啟即時字幕
-- 導遊端可以選擇中文或英文
-- 遊客端可以看到即時字幕
-- 遊客端可以顯示或隱藏字幕
-- 不儲存逐字稿
+## 主要功能
 
-## 技術設計
+1. `index.html` 作為導遊端首頁，適合 GitHub Pages 自動開啟。
+2. 導遊端自動產生隨機房間代碼，例如 `P104V2-7K3D`。
+3. 導遊端自動產生遊客 QR Code。
+4. 遊客掃描後進入 `visitor.html?room=P104V2-XXXX`。
+5. 遊客端也顯示同一個 QR Code，方便下一位遊客掃描加入。
+6. LiveKit 負責語音傳輸。
+7. Supabase Realtime Broadcast 負責字幕同步。
+8. 導遊端可控制：
+   - 開始說話
+   - 暫停收音
+   - 開啟即時字幕
+   - 停止字幕
+   - 清除字幕
+9. 遊客端可控制：
+   - 開始收聽語音
+   - 顯示／隱藏字幕
+10. 字幕採逐段顯示，每一段分開成段落，較適合 Chrome 網頁翻譯。
+11. 不串接 OpenAI、Google Cloud Translation 或其他付費 AI API。
 
-本版本採用最低成本原型：
-
-導遊端瀏覽器 SpeechRecognition 產生字幕  
-→ Supabase Realtime Broadcast 傳送字幕  
-→ 遊客端訂閱同一房間並顯示字幕
-
-## 費用
-
-本版本沒有串接 OpenAI、Google、Azure、Deepgram 等付費 STT API，因此不會產生這些 AI API 費用。
-
-但仍可能有：
-
-1. Supabase Realtime 使用量
-2. GitHub Pages 或網站託管成本，若超出免費額度
-3. 瀏覽器語音辨識本身的限制
-
-## 重要限制
-
-此版本使用瀏覽器內建 SpeechRecognition / webkitSpeechRecognition。它適合原型測試，但不適合作為正式穩定服務的唯一依據。
-
-常見限制：
-
-- 不同瀏覽器支援程度不同
-- 手機瀏覽器可能有限制
-- 長時間辨識可能中斷
-- 麥克風權限被拒絕時無法啟動
-- 中文專有名詞、人名、地名可能辨識錯誤
-
-建議優先使用 Chrome 或 Edge 測試。
-
-## 檔案說明
+## 檔案結構
 
 ```text
-P104_Subtitle_Experiment_v1_1/
-├─ guide.html                         導遊端頁面
-├─ visitor.html                       遊客端頁面
-├─ config.sample.js                   Supabase 設定範例
+P104_V2_WhisperTour_VoiceCaption/
+├─ index.html
+├─ visitor.html
+├─ config.sample.js
 ├─ assets/
-│  ├─ css/style.css                   介面樣式
+│  ├─ css/style.css
 │  └─ js/
-│     ├─ p104_common.js               共用工具
-│     ├─ p104_guide.js                導遊端邏輯
-│     └─ p104_visitor.js              遊客端邏輯
-└─ sql/
-   └─ P104_subtitle_experiment_notes.sql
+│     ├─ p104v2_common.js
+│     ├─ p104v2_guide.js
+│     └─ p104v2_visitor.js
+├─ edge-functions/
+│  └─ P104_V2_livekit_token/index.ts
+├─ sql/P104_V2_realtime_notes.sql
+├─ README.md
+└─ README_SYSTEM.md
 ```
 
-## 安裝步驟
+## 設定步驟
 
-### 1. 複製 config.sample.js
+### 1. 建立 config.js
 
-將：
+複製：
 
 ```text
 config.sample.js
 ```
 
-複製成：
+成為：
 
 ```text
 config.js
 ```
 
-### 2. 填入 Supabase 設定
-
-在 `config.js` 中填入：
+填入：
 
 ```js
-window.P104_CONFIG = {
-  SUPABASE_URL: "https://YOUR_PROJECT_ID.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY"
+window.P104_V2_CONFIG = {
+  SUPABASE_URL: "https://YOUR_PROJECT_REF.supabase.co",
+  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_PUBLIC_KEY",
+  LIVEKIT_URL: "wss://YOUR_LIVEKIT_HOST.livekit.cloud",
+  LIVEKIT_TOKEN_ENDPOINT: "https://YOUR_PROJECT_REF.functions.supabase.co/P104_V2_livekit_token",
+  DEFAULT_CAPTION_LANGUAGE: "zh-TW",
+  ROOM_PREFIX: "P104V2",
+  MAX_CAPTION_PARAGRAPHS: 30
 };
 ```
 
-### 3. 放到 GitHub Pages 或本機測試
+注意：`SUPABASE_URL` 不可以加 `/rest/v1/`。
 
-若用 GitHub Pages，請把整個資料夾上傳到 repository。
+### 2. 建立 Supabase Edge Function
 
-若本機測試，建議用簡單伺服器，不要直接雙擊 HTML：
-
-```bash
-python -m http.server 8000
-```
-
-然後開啟：
+在 Supabase Dashboard 建立 Edge Function：
 
 ```text
-http://localhost:8000/guide.html
-http://localhost:8000/visitor.html
+P104_V2_livekit_token
 ```
 
-## 使用方式
+把以下檔案內容貼上：
+
+```text
+edge-functions/P104_V2_livekit_token/index.ts
+```
+
+設定 secrets：
+
+```text
+LIVEKIT_API_KEY
+LIVEKIT_API_SECRET
+```
+
+建議再設定：
+
+```text
+P104_V2_ALLOWED_ORIGINS
+```
+
+例如：
+
+```text
+https://yourname.github.io,http://localhost:5500
+```
+
+若不設定 `P104_V2_ALLOWED_ORIGINS`，Function 會用 `Access-Control-Allow-Origin: *`，方便測試，但正式展示建議限制來源。
+
+### 3. Supabase Realtime
+
+本版本不需要建立資料表。字幕使用 Realtime Broadcast。
+
+請確認：
+
+```text
+Realtime service：ON
+Public channels：Allowed
+```
+
+### 4. GitHub Pages
+
+把整個資料夾內容上傳到 GitHub Pages 專案。
+
+導遊端首頁：
+
+```text
+https://yourname.github.io/P104V2/
+```
+
+遊客端由 QR Code 自動導向：
+
+```text
+https://yourname.github.io/P104V2/visitor.html?room=P104V2-XXXX
+```
+
+## 操作方式
 
 ### 導遊端
 
-1. 開啟 `guide.html`
-2. 輸入房間代碼，例如 `P104-DEMO`
-3. 選擇字幕語言：中文 Mandarin 或 English
-4. 按「連線字幕房間」
-5. 按「開啟即時字幕」
-6. 允許麥克風權限
-7. 開始說話
+1. 開啟 `index.html`。
+2. 系統自動產生房間代碼與 QR Code。
+3. 請遊客掃描 QR Code。
+4. 按「開始說話」開始傳送語音。
+5. 按「開啟即時字幕」開始送出逐段字幕。
+6. 暫停時可按「暫停收音」。
+7. 不需要字幕時可按「停止字幕」。
+8. 換展區或重新開始時可按「清除字幕」。
 
 ### 遊客端
 
-1. 開啟 `visitor.html`
-2. 輸入同一個房間代碼
-3. 按「加入字幕房間」
-4. 等待字幕出現
-5. 可按「隱藏字幕」或「顯示字幕」
+1. 掃描 QR Code。
+2. 進入遊客端頁面後，字幕會自動加入房間。
+3. 按「開始收聽語音」後即可收聽導遊聲音。
+4. 可按「隱藏字幕」或「顯示字幕」。
+5. 若需要外語，可使用 Google Chrome 內建翻譯功能。
 
-## 建議測試情境
+## 重要限制
 
-### 中文測試
+1. 手機瀏覽器通常不允許自動播放聲音，所以遊客端需要點一次「開始收聽語音」。
+2. 瀏覽器語音辨識以 Chrome 支援較佳。
+3. Web Speech API 的字幕品質取決於現場收音、網路與瀏覽器。
+4. Chrome 網頁翻譯不是本系統內建 AI 翻譯，而是瀏覽器輔助翻譯。
+5. 此版本不儲存逐字稿。
 
-語言選擇 `zh-TW`，導遊朗讀：
+## 疑難排解
 
-> 各位來賓您好，歡迎使用 P104 WhisperTour 輕聲導覽系統。現在您可以在手機上聽到導覽，也可以看到即時字幕。
+### Supabase 字幕出現 CHANNEL_ERROR
 
-### 英文測試
+1. 確認 `SUPABASE_URL` 沒有 `/rest/v1/`。
+2. 確認 `config.js` 不是舊快取，請按 Ctrl + F5。
+3. 確認 Realtime public channel 可用。
+4. 確認 `SUPABASE_ANON_KEY` 正確。
 
-語言選擇 `en-US`，導遊朗讀：
+### 語音無法連線
 
-> Welcome to the P104 WhisperTour system. You can listen to the guide and read live captions on your phone.
+1. 確認 `LIVEKIT_URL` 是 `wss://...`。
+2. 確認 Edge Function `P104_V2_livekit_token` 已部署。
+3. 確認 Function secrets 已設定 `LIVEKIT_API_KEY` 與 `LIVEKIT_API_SECRET`。
+4. 查看瀏覽器 Console 是否有 CORS 錯誤。
+5. 若有 CORS 錯誤，檢查 `P104_V2_ALLOWED_ORIGINS` 是否包含 GitHub Pages 網址。
 
-## 下一階段建議
+### 字幕重複
 
-若第一階段測試成功，第二階段可以升級為正式 STT 架構：
-
-- LiveKit audio stream
-- LiveKit Agent 或後端 worker
-- OpenAI / Google / Azure / Deepgram STT
-- 可選擇是否儲存逐字稿
-- 可加入即時翻譯
-- 可加入導覽摘要
-
-
-
-## v1.1 修正
-
-- 修正 Chrome / Edge Web Speech API 在 interim 與 final 結果交替時，可能造成字幕片段重複顯示的問題。
-- 導遊端新增簡易去重：同一 final segment 不重複累加；若 interim 與上一段 final 相同，則不顯示也不廣播。
-- 若語音辨識直接回傳完全重複片段，例如「禮義廉恥禮義廉恥」，會先壓縮為「禮義廉恥」。
+此版本已加入基本去重處理。若仍出現重複，可能是 Chrome Web Speech API 將同一句多次回傳 final。可以先放慢說話速度，並避免每句太短。

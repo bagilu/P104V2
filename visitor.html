@@ -3,50 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>P104 遊客端｜即時字幕實驗版</title>
+  <title>P104 V2 WhisperTour｜遊客端</title>
   <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="config.js"></script>
 </head>
 <body>
-  <main class="shell">
-    <section class="hero card">
+  <main class="shell visitor-shell">
+    <header class="hero">
       <div>
-        <p class="eyebrow">P104 WhisperTour</p>
-        <h1>遊客端｜即時字幕</h1>
-        <p class="muted">輸入導遊提供的房間代碼，即可接收即時字幕。可自行顯示或隱藏字幕區。</p>
+        <p class="eyebrow">P104 V2 WhisperTour</p>
+        <h1>輕聲導覽｜遊客端</h1>
+        <p class="subtitle">請戴上耳機收聽導遊語音，也可同步觀看逐段字幕。</p>
       </div>
-      <div class="badge">Audience</div>
+      <div class="status-card">
+        <span class="status-dot" id="overallDot"></span>
+        <span id="overallStatus">準備加入</span>
+      </div>
+    </header>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>加入房間</h2>
+        <div class="room-code" id="roomCode">--</div>
+        <p class="hint">若下一位遊客需要加入，也可以掃描下方同一個 QR Code。</p>
+        <div class="qr-wrap compact">
+          <div id="qrCode"></div>
+        </div>
+        <div class="row gap wrap">
+          <button class="btn primary" id="listenBtn">開始收聽語音</button>
+          <button class="btn secondary" id="toggleCaptionBtn">隱藏字幕</button>
+        </div>
+        <div class="mini-status" id="voiceStatus">語音狀態：尚未收聽</div>
+        <div class="mini-status" id="captionStatus">字幕狀態：準備中</div>
+        <div id="audioContainer" class="audio-container"></div>
+      </article>
+
+      <article class="panel chrome-tip">
+        <h2>🌐 多語字幕提示</h2>
+        <p>建議使用 <strong>Google Chrome</strong> 開啟本頁。</p>
+        <p>若需要其他語言，可使用 Chrome 內建「翻譯」功能，將頁面文字與字幕轉換為英文、日文、韓文或其他語言。</p>
+        <details>
+          <summary>手機 Chrome 操作方式</summary>
+          <p><strong>Android Chrome：</strong>右上角 ⋮ → 翻譯</p>
+          <p><strong>iPhone Chrome：</strong>右下角或右上角 ⋯ → 翻譯</p>
+          <p class="hint">即時字幕採逐段顯示，較有利於瀏覽器翻譯處理。</p>
+        </details>
+      </article>
     </section>
 
-    <section class="card controls">
-      <label>
-        房間代碼
-        <input id="roomCode" type="text" value="P104-DEMO" autocomplete="off" />
-      </label>
-
-      <div class="button-row">
-        <button id="connectBtn" class="primary">加入字幕房間</button>
-        <button id="toggleCaptionBtn" disabled>隱藏字幕</button>
-        <button id="clearBtn" disabled>清除本機畫面</button>
-      </div>
-
-      <p id="status" class="status">尚未加入</p>
-    </section>
-
-    <section id="subtitlePanel" class="card subtitle-card">
-      <div class="subtitle-header">
-        <h2>即時字幕</h2>
-        <span id="liveTag" class="live-tag off">WAITING</span>
-      </div>
-      <div id="subtitleBox" class="subtitle-box" aria-live="polite">
-        等待導遊端送出字幕……
-      </div>
-      <p class="hint">此版本只顯示即時字幕，不會儲存逐字稿。</p>
+    <section class="panel caption-panel">
+      <h2>即時字幕</h2>
+      <div class="caption-feed large" id="captionFeed"></div>
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="assets/js/p104_common.js"></script>
-  <script src="assets/js/p104_visitor.js"></script>
+  <script type="module" src="assets/js/p104v2_visitor.js"></script>
 </body>
 </html>
