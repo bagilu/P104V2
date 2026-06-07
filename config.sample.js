@@ -3,6 +3,7 @@
 window.P104_V2_CONFIG = {
   // Supabase project root URL. Do not include /rest/v1/.
   SUPABASE_URL: "https://YOUR_PROJECT_REF.supabase.co",
+  // Required for Supabase Realtime and for calling the P104_V2_livekit_token Edge Function.
   SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_PUBLIC_KEY",
 
   // LiveKit websocket URL, for example: wss://your-project.livekit.cloud

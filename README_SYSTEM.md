@@ -83,3 +83,14 @@ P104_V2_ALLOWED_ORIGINS=https://yourname.github.io
 3. 字幕逐字稿儲存：新增 `P104_V2_CaptionLogs` 資料表。
 4. 多導遊與多展區：新增房間管理與導覽場次設定。
 5. 管理後台：查看目前房間、連線人數與導覽狀態。
+
+### 401 Token request failed 修正說明
+
+本版前端呼叫 `P104_V2_livekit_token` 時，會自動附上 Supabase anon key：
+
+```text
+apikey: SUPABASE_ANON_KEY
+Authorization: Bearer SUPABASE_ANON_KEY
+```
+
+因此 Supabase Edge Function 即使維持 JWT Verification，也可以接受匿名使用者請求。若仍出現 401，請確認 `config.js` 的 `SUPABASE_ANON_KEY` 是否正確，且 `LIVEKIT_TOKEN_ENDPOINT` 是否指向 `P104_V2_livekit_token`。

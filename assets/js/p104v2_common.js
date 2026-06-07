@@ -109,9 +109,17 @@ export async function requestLiveKitToken({ room, identity, role }) {
   const cfg = getConfig();
   const endpoint = cfg.LIVEKIT_TOKEN_ENDPOINT;
   if (!endpoint || endpoint.includes("YOUR_PROJECT_REF")) throw new Error("LIVEKIT_TOKEN_ENDPOINT is not configured.");
+  const anonKey = cfg.SUPABASE_ANON_KEY;
+  if (!anonKey || anonKey.includes("YOUR_SUPABASE_ANON")) {
+    throw new Error("SUPABASE_ANON_KEY is not configured.");
+  }
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": anonKey,
+      "Authorization": `Bearer ${anonKey}`
+    },
     body: JSON.stringify({ room, identity, role })
   });
   const json = await res.json().catch(() => ({}));

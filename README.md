@@ -186,3 +186,14 @@ https://yourname.github.io/P104V2/visitor.html?room=P104V2-XXXX
 ### 字幕重複
 
 此版本已加入基本去重處理。若仍出現重複，可能是 Chrome Web Speech API 將同一句多次回傳 final。可以先放慢說話速度，並避免每句太短。
+
+### 401 Token request failed 修正說明
+
+本版前端呼叫 `P104_V2_livekit_token` 時，會自動附上 Supabase anon key：
+
+```text
+apikey: SUPABASE_ANON_KEY
+Authorization: Bearer SUPABASE_ANON_KEY
+```
+
+因此 Supabase Edge Function 即使維持 JWT Verification，也可以接受匿名使用者請求。若仍出現 401，請確認 `config.js` 的 `SUPABASE_ANON_KEY` 是否正確，且 `LIVEKIT_TOKEN_ENDPOINT` 是否指向 `P104_V2_livekit_token`。
