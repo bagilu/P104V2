@@ -10,7 +10,7 @@ window.P104_V2_CONFIG = {
 
   // Supabase Edge Function URL for generating LiveKit access tokens.
   // Example: https://YOUR_PROJECT_REF.functions.supabase.co/P104_V2_livekit_token
-  LIVEKIT_TOKEN_ENDPOINT: "https://mfljkyvdadxlrbxlboce.supabase.co/functions/v1/P104_livekit_token",
+  LIVEKIT_TOKEN_ENDPOINT: "https://mfljkyvdadxlrbxlboce.supabase.co/functions/v1/P104_V2_livekit_token",
 
   DEFAULT_CAPTION_LANGUAGE: "zh-TW",
   ROOM_PREFIX: "P104V2",
