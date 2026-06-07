@@ -26,7 +26,7 @@
 ## 檔案結構
 
 ```text
-P104_V2_WhisperTour_VoiceCaption/
+P104_V2_WhisperTour_VoiceCaption_v2_2/
 ├─ index.html
 ├─ visitor.html
 ├─ config.sample.js
@@ -197,3 +197,10 @@ Authorization: Bearer SUPABASE_ANON_KEY
 ```
 
 因此 Supabase Edge Function 即使維持 JWT Verification，也可以接受匿名使用者請求。若仍出現 401，請確認 `config.js` 的 `SUPABASE_ANON_KEY` 是否正確，且 `LIVEKIT_TOKEN_ENDPOINT` 是否指向 `P104_V2_livekit_token`。
+
+
+## v2.2 修正
+- 修正遊客端可能因瀏覽器快取而沿用舊 token request 程式，導致 `Token request failed: 401`。
+- index.html 與 visitor.html 的 module script 加入 `?v=2.2` cache busting。
+- guide / visitor 對 common module 的 import 也加入 `?v=2.2`。
+- token request 仍會帶 `apikey` 與 `Authorization: Bearer <anon key>`，可維持 Edge Function JWT Verification。

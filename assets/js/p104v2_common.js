@@ -1,3 +1,5 @@
+export const P104_V2_BUILD = "2.2";
+
 export function getConfig() {
   const cfg = window.P104_V2_CONFIG || window.P104_CONFIG;
   if (!cfg) {
@@ -113,6 +115,7 @@ export async function requestLiveKitToken({ room, identity, role }) {
   if (!anonKey || anonKey.includes("YOUR_SUPABASE_ANON")) {
     throw new Error("SUPABASE_ANON_KEY is not configured.");
   }
+  console.info("P104 V2 token request", { endpoint, room, identity, role, build: P104_V2_BUILD });
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {
@@ -124,7 +127,7 @@ export async function requestLiveKitToken({ room, identity, role }) {
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok || !json.token) {
-    throw new Error(json.error || `Token request failed: ${res.status}`);
+    throw new Error(json.error || `Token request failed: ${res.status}. Please check config.js endpoint and clear browser cache.`);
   }
   return json.token;
 }
