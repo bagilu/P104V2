@@ -3,7 +3,7 @@ import {
   getConfig, getSupabase, generateRoomCode, normalizeRoomCode, getRoomFromURL,
   makeVisitorURL, makeChannelName, renderQR, setStatus, appendCaption,
   clearCaptions, compressRepeatedText, requestLiveKitToken, nowTime
-} from './p104v2_common.js?v=2.3';
+} from './p104v2_common.js?v=2.4';
 
 const cfg = getConfig();
 const supabase = getSupabase();

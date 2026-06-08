@@ -98,6 +98,16 @@ Authorization: Bearer SUPABASE_ANON_KEY
 
 ## v2.3 修正
 - 修正遊客端可能因瀏覽器快取而沿用舊 token request 程式，導致 `Token request failed: 401`。
-- index.html 與 visitor.html 的 module script 加入 `?v=2.3` cache busting。
-- guide / visitor 對 common module 的 import 也加入 `?v=2.3`。
+- index.html 與 visitor.html 的 module script 加入 `?v=2.4` cache busting。
+- guide / visitor 對 common module 的 import 也加入 `?v=2.4`。
 - token request 仍會帶 `apikey` 與 `Authorization: Bearer <anon key>`，可維持 Edge Function JWT Verification。
+
+
+## v2.4 遊客端極簡版修正
+
+- 遊客端掃描 QR Code 後自動加入導覽群組。
+- 字幕預設顯示，最新一句固定在最上方，舊字幕往下排列。
+- 遊客端字幕不需滑動，預設保留最近 5 段。可在 `config.js` 增加 `VISITOR_MAX_CAPTION_PARAGRAPHS` 調整。
+- 遊客端自動嘗試連線語音；若手機瀏覽器限制自動播放，畫面只保留一個大型「開始收聽語音」按鈕。
+- 遊客端 QR Code 移到頁面最下方的「分享本導覽群組給其他遊客」區塊。
+- Chrome 翻譯提示改為可展開說明，減少主畫面干擾。

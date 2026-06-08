@@ -1,4 +1,4 @@
-export const P104_V2_BUILD = "2.3";
+export const P104_V2_BUILD = "2.4";
 
 export function getConfig() {
   const cfg = window.P104_V2_CONFIG || window.P104_CONFIG;
@@ -87,6 +87,30 @@ export function appendCaption(feed, text) {
   feed.appendChild(div);
   while (feed.children.length > max) feed.removeChild(feed.firstElementChild);
   feed.scrollTop = feed.scrollHeight;
+}
+
+export function prependCaption(feed, text, maxItems = 5) {
+  if (!feed) return;
+  const empty = feed.querySelector('.empty-caption');
+  if (empty) empty.remove();
+
+  const div = document.createElement("div");
+  div.className = feed.children.length === 0 ? "caption-item latest" : "caption-item";
+  const body = document.createElement("div");
+  body.textContent = text;
+  div.appendChild(body);
+
+  for (const item of feed.querySelectorAll('.caption-item.latest')) {
+    item.classList.remove('latest');
+  }
+  div.classList.add('latest');
+  feed.prepend(div);
+
+  while (feed.querySelectorAll('.caption-item').length > maxItems) {
+    const items = feed.querySelectorAll('.caption-item');
+    items[items.length - 1].remove();
+  }
+  feed.scrollTop = 0;
 }
 
 export function clearCaptions(feed) {

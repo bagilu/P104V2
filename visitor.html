@@ -10,55 +10,68 @@
   <script src="config.js"></script>
 </head>
 <body>
-  <main class="shell visitor-shell">
-    <header class="hero">
+  <main class="shell visitor-shell simple-visitor">
+    <header class="hero visitor-hero compact-hero">
       <div>
         <p class="eyebrow">P104 V2 WhisperTour</p>
-        <h1>輕聲導覽｜遊客端</h1>
-        <p class="subtitle">請戴上耳機收聽導遊語音，也可同步觀看逐段字幕。</p>
+        <h1>輕聲導覽</h1>
+        <p class="subtitle" id="visitorSubtitle">您已進入導覽群組。字幕會自動顯示，語音若未自動播放，請點選下方按鈕。</p>
       </div>
       <div class="status-card">
         <span class="status-dot" id="overallDot"></span>
-        <span id="overallStatus">準備加入</span>
+        <span id="overallStatus">加入中</span>
       </div>
     </header>
 
-    <section class="grid two">
-      <article class="panel">
-        <h2>加入導覽群組</h2>
-        <div class="room-code" id="roomCode">--</div>
-        <p class="hint">若下一位遊客需要加入，也可以掃描下方同一個 QR Code。</p>
-        <div class="qr-wrap compact">
-          <div id="qrCode"></div>
+    <section class="panel visitor-main-panel">
+      <div class="visitor-topline">
+        <div>
+          <div class="small-label">導覽群組</div>
+          <div class="visitor-room-code" id="roomCode">--</div>
         </div>
-        <div class="row gap wrap">
-          <button class="btn primary" id="listenBtn">開始收聽語音</button>
-          <button class="btn secondary" id="toggleCaptionBtn">隱藏字幕</button>
-        </div>
-        <div class="mini-status" id="voiceStatus">語音狀態：尚未收聽</div>
-        <div class="mini-status" id="captionStatus">字幕狀態：準備中</div>
-        <div id="audioContainer" class="audio-container"></div>
-      </article>
+        <div class="visitor-state" id="visitorState">等待導覽開始</div>
+      </div>
 
-      <article class="panel chrome-tip">
-        <h2>🌐 多語字幕提示</h2>
-        <p>建議使用 <strong>Google Chrome</strong> 開啟本頁。</p>
-        <p>若需要其他語言，可使用 Chrome 內建「翻譯」功能，將頁面文字與字幕轉換為英文、日文、韓文或其他語言。</p>
-        <details>
-          <summary>手機 Chrome 操作方式</summary>
-          <p><strong>Android Chrome：</strong>右上角 ⋮ → 翻譯</p>
-          <p><strong>iPhone Chrome：</strong>右下角或右上角 ⋯ → 翻譯</p>
-          <p class="hint">即時字幕採逐段顯示，較有利於瀏覽器翻譯處理。</p>
-        </details>
-      </article>
+      <button class="btn primary listen-big" id="listenBtn">開始收聽語音</button>
+      <div class="mini-status visitor-mini-status" id="voiceStatus">語音狀態：正在準備</div>
+      <div id="audioContainer" class="audio-container"></div>
     </section>
 
-    <section class="panel caption-panel">
-      <h2>即時字幕</h2>
-      <div class="caption-feed large" id="captionFeed"></div>
+    <section class="panel caption-panel visitor-caption-panel">
+      <div class="caption-header-row">
+        <h2>即時字幕</h2>
+        <div class="row gap wrap visitor-small-controls">
+          <button class="btn secondary small" id="toggleCaptionBtn">隱藏字幕</button>
+          <button class="btn secondary small" id="fontBtn">放大字幕</button>
+        </div>
+      </div>
+      <div class="caption-feed visitor-caption-feed" id="captionFeed">
+        <div class="empty-caption">等待導遊開始說明……</div>
+      </div>
+      <div class="mini-status visitor-mini-status" id="captionStatus">字幕狀態：準備中</div>
+    </section>
+
+    <section class="panel visitor-help-panel">
+      <details>
+        <summary>🌐 需要其他語言？建議使用 Google Chrome 翻譯</summary>
+        <p>若需要其他語言，可使用 Chrome 內建「翻譯」功能，將頁面文字與字幕轉換為英文、日文、韓文或其他語言。</p>
+        <p><strong>Android Chrome：</strong>右上角 ⋮ → 翻譯</p>
+        <p><strong>iPhone Chrome：</strong>右下角或右上角 ⋯ → 翻譯</p>
+        <p class="hint">提醒：目前語音本身不會自動翻譯；Chrome 翻譯主要協助轉換頁面文字與字幕。</p>
+      </details>
+    </section>
+
+    <section class="panel visitor-share-panel">
+      <details>
+        <summary>分享本導覽群組給其他遊客</summary>
+        <p class="hint">下一位遊客可掃描此 QR Code 加入同一導覽群組。</p>
+        <div class="qr-wrap compact bottom-qr">
+          <div id="qrCode"></div>
+        </div>
+      </details>
     </section>
   </main>
 
-  <script type="module" src="assets/js/p104v2_visitor.js?v=2.3"></script>
+  <script type="module" src="assets/js/p104v2_visitor.js?v=2.4"></script>
 </body>
 </html>
